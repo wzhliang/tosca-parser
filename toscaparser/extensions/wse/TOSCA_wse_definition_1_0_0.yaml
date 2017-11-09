@@ -696,7 +696,6 @@ policy_types:
       default_instances:
         type: integer
         required: false
-        default: 1
       increment:
         type: integer
         required: false
