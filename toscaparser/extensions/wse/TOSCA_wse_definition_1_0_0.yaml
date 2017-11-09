@@ -1,0 +1,731 @@
+tosca_definitions_version: tosca_simple_profile_for_wse_1_0_0
+
+description: >
+  Contains the non-normative definition of Docker-related types as
+  currently supported in WiseCloud
+
+data_types:
+  tosca.datatypes.wise2c.LogConfig:
+    derived_from: tosca.datatypes.Root
+    description: Configuration data for log files
+    properties:
+      path:
+        type: string
+        description: Directory of the log file(s) inside the container
+      encoding:
+        type: string
+        description: Encoding of the log file.
+      filter:
+        type: string
+        description: Filter for file names. E.g. *.log
+  tosca.datatypes.wise2c.IngressTarget:
+    derived_from: tosca.datatypes.Root
+    description: Ingress path configuration parameter
+    properties:
+      target:
+        type: string
+        description: service name or selector
+      port:
+        type: integer
+      weight:
+        type: integer
+        description: only valid in round-robin mode
+        required: false
+      start:
+        type: string
+        description: ipv4/uid range start
+        required: false
+      end:
+        type: string
+        description: ipv4/uid range end
+        required: false
+      ipv4_suffix:
+        type: string
+        description: last part of ipv4 octet
+        required: false
+      param:
+        type: string
+        description: query parameter
+        required: false
+  tosca.datatypes.wise2c.IngressAccessMethod:
+    derived_from: tosca.datatypes.Root
+    description: Ingress access method
+    properties:
+      type:
+        type: string
+        description: how to access, Floating_IP, Node_IP, External_IP
+      ip:
+        type: string
+        description: ip address
+        required: false
+  tosca.datatypes.wise2c.IngressRule:
+    derived_from: tosca.datatypes.Root
+    description: Ingress rule parameter
+    properties:
+      name:
+        type: string
+      protocol:
+        type: string
+      request_host:
+        type: string
+        required: false
+      request_path:
+        type: string
+        required: false
+      request_port:
+        type: integer
+        required: false
+      target_type:
+        type: string
+        description: service-name or selector
+      routing_mode:
+        type: string
+        description: round-robin, ipv4-range, ip-hash, uid-range, query-param
+      targets:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.wise2c.IngressTarget
+  tosca.datatypes.wise2c.LBTarget:
+    derived_from: tosca.datatypes.Root
+    description: Ingress path configuration parameter
+    properties:
+      port:
+        type: integer
+      target:
+        type: string
+      weight:
+        type: integer
+        required: false
+        default: 1
+  tosca.datatypes.wise2c.LBPortRule:
+    derived_from: tosca.datatypes.Root
+    description: Load balancer port rule
+    properties:
+      name:
+        type: string
+      request_port:
+        type: integer
+      target_type:
+        type: string
+        description: service-name or selector
+      targets:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.wise2c.LBTarget
+      protocol:
+        type: string
+      request_host:
+        type: string
+        required: false
+      routing_rule:
+        type: string
+        required: false
+        default: round-robin
+        description: round-robin or ip_hash
+      ipv4_last_octet:
+        type: integer
+        required: false
+        description: last octect of source IP
+  rancher.datatypes.LBPortRule:
+    derived_from: tosca.datatypes.Root
+    description: Load balancer port rule
+    properties:
+      source_port:
+        type: integer
+      target_port:
+        type: integer
+      service:
+        type: string
+      protocol:
+        type: string
+        required: false
+      hostname:
+        type: string
+        required: false
+      path:
+        type: string
+        required: false
+      priority:
+        type: integer
+        required: false
+      selector:
+        type: string
+        required: false
+  tosca.datatypes.wise2c.LBStickinessPolicy:
+    derived_from: tosca.datatypes.Root
+    description: Rancher load balancer stickiness policy
+    properties:
+      cookie:
+        type: string
+        required: false
+      domain:
+        type: string
+        required: false
+      indirect:
+        type: boolean
+        required: false
+      mode:
+        type: string
+        required: false
+      nocache:
+        type: boolean
+        required: false
+      postonly:
+        type: boolean
+        required: false
+      name:
+        type: string
+        required: false
+        default: route
+      path:
+        type: string
+        required: false
+        description: limit cookie usage to this http path
+      expires:
+        type: string
+        required: false
+        description: time. e.g. 1h
+      hash:
+        type: string
+        required: false
+        description: index, md5 or sha1
+      no_fallback:
+        type: boolean
+        required: false
+        description: returns 502 when instance is dead
+  tosca.data_types.wise2c.ExtServiceHealthCheck:
+    derived_from: tosca.datatypes.Root
+    description: Rancher external service health check parameter
+    properties:
+      port:
+        type: integer
+        description: port for TCP/HTTP health check
+        required: false
+      request_line:
+        type: string
+        description: request line for HTTP check
+        required: false
+      interval:
+        type: integer
+        required: false
+      initializing_timeout:
+        type: integer
+        required: false
+      unhealthy_threshold:
+        type: integer
+        required: false
+      strategy:
+        type: string
+        required: false
+      recreate_on_quorum_strategy_config:
+        type: tosca.data_types.wise2c.HealthCheckQuorum
+        required: false
+      healthy_threshold:
+        type: integer
+        required: false
+      response_timeout:
+        type: integer
+        required: false
+      reinitializing_timeout:
+        type: integer
+        required: false
+  tosca.data_types.wise2c.HealthCheckQuorum:
+    derived_from: tosca.datatypes.Root
+    properties:
+      quorum:
+        type: integer
+  tosca.datatypes.wise2c.Condition:
+    derived_from: tosca.datatypes.Root
+    properties:
+      period:
+        type: integer
+        required: false
+      method:
+        type: string
+        required: false
+      constraint:
+        type: string
+        required: false
+  tosca.datatypes.wise2c.Trigger:
+    derived_from: tosca.datatypes.Root
+    properties:
+      description:
+        type: string
+        required: false
+      schedule:
+        type: string
+        required: false
+      action:
+        type: string
+      condition:
+        type: tosca.datatypes.wise2c.Condition
+
+node_types:
+  tosca.nodes.Container.Application.DockerContainer:
+    derived_from: tosca.nodes.Container.Application
+    description: >
+      The TOSCA Container Application Docker node represents an application running in a Docker container.
+      Properties defined in the node will be interpreted as the entrypoint's arguments.
+    properties: &container_properties
+      cpu_shares:
+        type: integer
+        required: false
+      docker_options:
+        type: map
+        required: false
+      docker_run_args:
+        type: list
+        required: false
+        entry_schema:
+          description: Docker run arguments. Allows safe usage of Docker ENTRYPOINT statement in the Dockerfile.
+          type: string
+      docker_run_cmd:
+        type: string
+        required: false
+        description: Docker run command. Will override the Dockerfile CMD statement.
+      docker_env_vars:
+        type: map
+        required: false
+      image:
+        type: string
+        description: >
+          Hacky way of specifying docker image
+      labels:
+        type: map
+        required: false
+        description: Labels
+      ports:
+        type: list
+        required: false
+        description: "External ports specification. E.g. 8080:8080/udp"
+      expose:
+        type: list
+        required: false
+        description: Internal ports specification
+        entry_schema:
+          type: string
+      command:
+        type: string
+        required: false
+        description: Customized command
+      stdin_open:
+        type: boolean
+        required: false
+      tty:
+        type: boolean
+        required: false
+      environment:
+        type: map
+        required: false
+      dns:
+        type: list
+        required: false
+        description: Custom DNS servers
+        entry_schema:
+          type: string
+      dns_search:
+        type: list
+        required: false
+        description: Custom DNS search domains
+        entry_schema:
+          type: string
+      network_mode:
+        type: string
+        required: false
+        description: Direct match to docker-compose value
+      entrypoint:
+        type: string
+        required: false
+        description: Direct match to docker-compose value
+      working_dir:
+        type: string
+        required: false
+        description: Direct match to docker-compose value
+      user:
+        type: string
+        required: false
+        description: Direct match to docker-compose value
+      restart:
+        type: string
+        required: false
+        description: Direct match to docker-compose value
+      domainname:
+        type: string
+        required: false
+        description: Direct match to docker-compose value
+      privileged:
+        type: boolean
+        required: false
+        description: Direct match to docker-compose value
+      cpuset:
+        type: string
+        required: false
+        description: Direct match to docker-compose value
+      cpu_quota:
+        type: integer
+        required: false
+        description: Direct match to docker-compose value
+      cpu:
+        type: string
+        required: false
+        description: milicpu, same as spec.containers[].resources.requests.cpu
+      devices:
+        type: map
+        required: false
+        description: Direct match to docker-compose value
+      logging:
+        type: map
+        required: false
+        description: Direct match to docker-compose value
+      sysctls:
+        type: map
+        required: false
+        description: Direct match to docker-compose value
+      cap_add:
+        type: list
+        required: false
+        description: Direct match to docker-compose value
+        entry_schema:
+          type: string
+      cap_drop:
+        type: list
+        required: false
+        description: Direct match to docker-compose value
+        entry_schema:
+          type: string
+      pid:
+        type: string
+        required: false
+        description: Direct match to docker-compose value
+      mem_limit:
+        type: integer
+        required: false
+        description: MiB
+      memswap_limit:
+        type: integer
+        required: false
+        description: Rancher only
+      hostname:
+        type: string
+        required: false
+        description: Direct match to docker-compose value
+      mem_reservation:
+        type: integer
+        required: false
+        description: Rancher only
+      type:
+        type: string
+        required: false
+        description: Type of service
+      job_type:
+        type: string
+        required: false
+        description: Type of job
+        default: stateless
+      volumes_from:
+        type: list
+        required: false
+        entry_schema:
+          type: string
+      external_links:
+        type: list
+        required: false
+        entry_schema:
+          type: string
+      configurations:
+        type: list
+        required: false
+        description: Configuration files. Array of map
+        entry_schema:
+          type: string
+      log_files:
+        type: list
+        required: false
+        description: Log files. Array of map
+        entry_schema:
+          type: tosca.datatypes.wise2c.LogConfig
+      schedule:
+        type: string
+        required: false
+        description: cron expression like "0 * * * * ?"
+    attributes:
+      endpoint:
+        type: string
+        description: >
+          Reflects the external endpoint assigned to this container.
+    requirements:
+      - attach:
+          capability: tosca.capabilities.Attachment
+          occurrences: [0, UNBOUNDED]
+          # BEGIN add because toscaparser doesn't consider this optional
+          node: tosca.nodes.wise2c.DockerVolume
+          relationship: tosca.relationships.wise2c.MountDockerVolume
+          # END
+      - attach:
+          capability: tosca.capabilities.Attachment
+          occurrences: [0, UNBOUNDED]
+          # BEGIN add because toscaparser doesn't consider this optional
+          node: tosca.nodes.wise2c.DynamicConfigFile
+          relationship: tosca.relationships.wise2c.Acquire
+          # END
+      - attach:
+          capability: tosca.capabilities.Attachment
+          occurrences: [0, UNBOUNDED]
+          node: tosca.nodes.wise2c.RoommateContainer
+          relationship: tosca.relationships.wise2c.CoLocate
+  tosca.nodes.wise2c.RoommateContainer:
+    properties: *container_properties
+    requirements:
+      - attach:
+          capability: tosca.capabilities.Attachment
+          occurrences: [0, UNBOUNDED]
+          node: tosca.nodes.wise2c.DockerVolume
+          relationship: tosca.relationships.wise2c.MountDockerVolume
+  tosca.nodes.wise2c.Ingress:
+    derived_from: tosca.nodes.Root
+    properties:
+      certificate:
+        type: string
+        required: false
+      stickiness_policy:
+        type: tosca.datatypes.wise2c.LBStickinessPolicy
+        required: false
+      labels:
+        type: map
+        required: false
+      access_method:
+        type: tosca.datatypes.wise2c.IngressAccessMethod
+      rules:
+        type: list
+        description: Array of ingress rules
+        entry_schema:
+          type: tosca.datatypes.wise2c.IngressRule
+      image:
+        type: string
+        required: false
+        default: registry.cn-hangzhou.aliyuncs.com/wise2c/wisecloud-ingress-lb:latest
+  tosca.nodes.wise2c.LoadBalancer:
+    derived_from: tosca.nodes.Root
+    properties:
+      certificate:
+        type: string
+        required: false
+      config:
+        type: string
+        required: false
+        description: Customized HAProxy configuration
+      labels:
+        type: map
+        required: false
+      image:
+        type: string
+        required: false
+        default: registry.cn-hangzhou.aliyuncs.com/wise2c/wisecloud-ingress-lb:latest
+      rules:
+        type: list
+        required: true
+        entry_schema:
+          type: tosca.datatypes.wise2c.LBPortRule
+      stickiness_policy:
+        type: tosca.datatypes.wise2c.LBStickinessPolicy
+        required: false
+  rancher.nodes.LoadBalancer:
+    derived_from: tosca.nodes.Container.Application
+    properties:
+      port_rules:
+        type: list
+        entry_schema:
+          type: rancher.datatypes.LBPortRule
+      stickiness_policy:
+        type: map
+        required: false
+      certs:
+        type: list
+        required: false
+        entry_schema:
+          type: string
+      default_cert:
+        type: string
+        required: false
+      config:
+        type: string
+        required: false
+        description: Customized HAProxy configuration
+      image:
+        type: string
+        required: false
+        default: rancher/lb-service-haproxy
+  tosca.nodes.wise2c.DockerVolume:
+    derived_from: tosca.nodes.Root
+    properties:
+      name:
+        type: string
+        description: Name of the volume.  If it does not exist, it is created implicitly. Otherwise, the existing volume is reused.
+        required: false
+      host_path:
+        type: string
+        description: Path on host, or name of the persistent volume
+        required: false
+      driver:
+        type: string
+        description: User specified volume driver
+        required: false
+        default: local
+      driver_opts:
+        type: map
+        description: Driver options
+        required: false
+      scope:
+        type: string
+        description: Scope of volume, container, stack or global
+        required: false
+        default: stack
+      mode:
+        type: string
+        description: Mount mode. Valid values 'ro', 'rw'
+        required: false
+        default: "rw"
+      capacity:
+        type: string
+        description: kubernetes only. size of the PVC
+        required: false
+        default: "2Gi"
+    capabilities:
+      attach:
+        type: tosca.capabilities.Attachment
+        valid_source_types: [tosca.nodes.wise2c.DockerContainer]
+        occurrences: [0, UNBOUNDED]
+  tosca.nodes.wise2c.ExternalService:
+    derived_from: tosca.nodes.Root
+    description: Rancher external service
+    properties:
+      external_ips:
+        type: list
+        description: IP address of external service
+        required: false
+        entry_schema:
+          type: string
+      host_name:
+        type: string
+        required: false
+      start_on_create:
+        type: boolean
+        required: false
+        default: true
+      health_check:
+        type: tosca.data_types.wise2c.ExtServiceHealthCheck
+        required: false
+  tosca.nodes.wise2c.DynamicConfigFile:
+    derived_from: tosca.nodes.Root
+    properties:
+      template_id:
+        type: string
+        description: UUID of the config file template
+      directory:
+        type: string
+        description: configuration directory
+        required: false
+      template_name:
+        type: string
+        required: false
+      template:
+        type: string
+        description: Actual content of the template file
+      profile:
+        type: string
+        description: Profile that matches the template. Normally a path into a KV store
+      filename:
+        type: string
+      init_container_image:
+        type: string
+        required: false
+        default: registry.cn-hangzhou.aliyuncs.com/wise2c/conf_init:stable
+    capabilities:
+      attach:
+        type: tosca.capabilities.Attachment
+        valid_source_types: [tosca.nodes.wise2c.DockerContainer]
+        occurrences: [0, UNBOUNDED]
+
+policy_types:
+  tosca.policies.wise2c.HealthCheck:
+    derived_from: tosca.policies.Performance
+    properties:
+      port:
+        type: integer
+        description: port for TCP/HTTP health check
+      request_line:
+        type: string
+        description: request line for HTTP check
+        required: false
+      interval:
+        type: integer
+        required: false
+      initializing_timeout:
+        type: integer
+        required: false
+      unhealthy_threshold:
+        type: integer
+        required: false
+      strategy:
+        type: string
+        required: false
+      recreate_on_quorum_strategy_config:
+        type: tosca.data_types.wise2c.HealthCheckQuorum
+        required: false
+      healthy_threshold:
+        type: integer
+        required: false
+      response_timeout:
+        type: integer
+        required: false
+  tosca.policies.wise2c.UpgradeStrategy:
+    derived_from: tosca.policies.Update
+    properties:
+      start_first:
+        type: boolean
+        description: Rancher only
+  tosca.policies.wise2c.Wildcard:
+    derived_from: tosca.policies.Roo
+    properties:
+      start_first:
+        type: boolean
+        description: Rancher only
+  tosca.policies.wise2c.Scaling:
+    derived_from: tosca.policies.Scaling
+    properties:
+      default_instances:
+        type: integer
+        required: false
+        default: 1
+      increment:
+        type: integer
+        required: false
+      min_instances:
+        type: integer
+        required: false
+      max_instances:
+        type: integer
+        required: false
+      cool_down:
+        type: integer
+        required: false
+      enable:
+        type: boolean
+        required: false
+
+relationship_types:
+  tosca.relationships.wise2c.Acquire:
+    description: Used to make config file available to the container
+    derived_from: tosca.relationships.Root
+  tosca.relationships.wise2c.MountDockerVolume:
+    description: Used to make volume available inside a container
+    derived_from: tosca.relationships.Root
+    valid_target_types:
+      - tosca.nodes.Container.Application.DockerContainer
+    properties:
+      container_path:
+        type: string
+        description: Path of the mounted volume
+  tosca.relationships.wise2c.CoLocate:
+    description: Used to merge namespace for containers
+    derived_from: tosca.relationships.Root
