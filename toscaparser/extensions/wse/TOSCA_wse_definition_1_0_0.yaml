@@ -126,7 +126,7 @@ data_types:
         type: integer
         required: false
         description: last octect of source IP
-  rancher.datatypes.LBPortRule:
+  tosca.datatypes.rancher.LBPortRule:
     derived_from: tosca.datatypes.Root
     description: Load balancer port rule
     properties:
@@ -529,13 +529,13 @@ node_types:
       stickiness_policy:
         type: tosca.datatypes.wise2c.LBStickinessPolicy
         required: false
-  rancher.nodes.LoadBalancer:
+  tosca.nodes.rancher.LoadBalancer:
     derived_from: tosca.nodes.Container.Application
     properties:
       port_rules:
         type: list
         entry_schema:
-          type: rancher.datatypes.LBPortRule
+          type: tosca.datatypes.rancher.LBPortRule
       stickiness_policy:
         type: map
         required: false
