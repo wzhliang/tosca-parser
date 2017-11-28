@@ -711,6 +711,10 @@ policy_types:
       enable:
         type: boolean
         required: false
+      job_completions:
+        type: integer
+        required: false
+        description: number of job completions desired. k8s
 
 relationship_types:
   tosca.relationships.wise2c.Acquire:
