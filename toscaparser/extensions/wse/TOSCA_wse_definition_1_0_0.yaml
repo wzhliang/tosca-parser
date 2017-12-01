@@ -473,7 +473,20 @@ node_types:
           occurrences: [0, UNBOUNDED]
           node: tosca.nodes.wise2c.RoommateContainer
           relationship: tosca.relationships.wise2c.CoLocate
+      - init:
+          capability: tosca.capabilities.Attachment
+          occurrences: [0, UNBOUNDED]
+          node: tosca.nodes.wise2c.InitContainer
+          relationship: tosca.relationships.wise2c.InitializedBy
   tosca.nodes.wise2c.RoommateContainer:
+    properties: *container_properties
+    requirements:
+      - attach:
+          capability: tosca.capabilities.Attachment
+          occurrences: [0, UNBOUNDED]
+          node: tosca.nodes.wise2c.DockerVolume
+          relationship: tosca.relationships.wise2c.MountDockerVolume
+  tosca.nodes.wise2c.InitContainer:
     properties: *container_properties
     requirements:
       - attach:
@@ -732,3 +745,8 @@ relationship_types:
   tosca.relationships.wise2c.CoLocate:
     description: Used to merge namespace for containers
     derived_from: tosca.relationships.Root
+  tosca.relationships.wise2c.InitializedBy:
+    description: Attach init container to a service
+    derived_from: tosca.relationships.Root
+    valid_target_types:
+      - tosca.nodes.wise2c.InitContainer
