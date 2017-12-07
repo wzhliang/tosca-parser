@@ -97,6 +97,18 @@ data_types:
         type: integer
         required: false
         default: 1
+      start:
+        type: string
+        description: ipv4/uid range start
+        required: false
+      end:
+        type: string
+        description: ipv4/uid range end
+        required: false
+      ipv4_suffix:
+        type: string
+        description: last part of ipv4 octet
+        required: false
   tosca.datatypes.wise2c.LBPortRule:
     derived_from: tosca.datatypes.Root
     description: Load balancer port rule
