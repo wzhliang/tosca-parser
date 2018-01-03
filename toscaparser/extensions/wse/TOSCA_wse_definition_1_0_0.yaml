@@ -271,6 +271,15 @@ data_types:
         type: string
       condition:
         type: tosca.datatypes.wise2c.Condition
+  tosca.datatypes.wise2c.HostAlias:
+    derived_from: tosca.datatypes.Root
+    properties:
+      ip:
+        type: string
+      hostnames:
+        type: list
+        entry_schema:
+          type: string
 
 node_types:
   tosca.nodes.Container.Application.DockerContainer:
@@ -460,6 +469,11 @@ node_types:
         type: string
         required: false
         description: cron expression like "0 * * * * ?"
+      hostAliases:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.wise2c.HostAlias
+        required: false
     attributes:
       endpoint:
         type: string
