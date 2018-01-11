@@ -616,14 +616,14 @@ node_types:
         required: false
       scope:
         type: string
-        description: Scope of volume, container, stack or global
+        description: Scope of volume, container, service or global
         required: false
-        default: stack
+        default: service
       mode:
         type: string
-        description: Mount mode. Valid values 'ro', 'rw'
+        description: PV access mode. Valid values 'ROX', 'RWO' and 'RWX'
         required: false
-        default: "rw"
+        default: "RWO"
       capacity:
         type: string
         description: kubernetes only. size of the PVC
