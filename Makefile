@@ -1,4 +1,4 @@
-TAG?=v1.0.0
+TAG?=v1.0.1
 REPO=yijian/toscaparser:${TAG}
 
 docker:
