@@ -474,6 +474,9 @@ node_types:
         entry_schema:
           type: tosca.datatypes.wise2c.HostAlias
         required: false
+      clusterIP:
+        type: string
+        required: false
     attributes:
       endpoint:
         type: string
