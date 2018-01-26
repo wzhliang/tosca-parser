@@ -506,6 +506,7 @@ node_types:
         required: false
       postStart:
         type: tosca.datatypes.wise2c.Handler
+        required: false
       clusterIP:
         type: string
         required: false
