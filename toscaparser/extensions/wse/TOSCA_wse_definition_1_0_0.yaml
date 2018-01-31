@@ -714,7 +714,7 @@ node_types:
       init_container_image:
         type: string
         required: false
-        default: registry.cn-hangzhou.aliyuncs.com/wise2c/conf_init:stable
+        default: registry.cn-hangzhou.aliyuncs.com/wise2c-dev/conf_init:latest
     capabilities:
       attach:
         type: tosca.capabilities.Attachment
