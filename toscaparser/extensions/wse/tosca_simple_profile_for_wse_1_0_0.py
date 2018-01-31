@@ -12,7 +12,7 @@
 
 # VERSION and DEFS_FILE are required for all extensions
 
-VERSION = 'tosca_simple_profile_for_wse_1_0_1'
+VERSION = 'tosca_simple_profile_for_wse_1_0_2'
 
 DEFS_FILE = "TOSCA_wse_definition_1_0_0.yaml"
 
