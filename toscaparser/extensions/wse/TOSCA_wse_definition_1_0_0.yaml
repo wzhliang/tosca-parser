@@ -548,6 +548,13 @@ node_types:
           occurrences: [0, UNBOUNDED]
           node: tosca.nodes.wise2c.DockerVolume
           relationship: tosca.relationships.wise2c.MountDockerVolume
+      - attach:
+          capability: tosca.capabilities.Attachment
+          occurrences: [0, UNBOUNDED]
+          # BEGIN add because toscaparser doesn't consider this optional
+          node: tosca.nodes.wise2c.DynamicConfigFile
+          relationship: tosca.relationships.wise2c.Acquire
+          # END
   tosca.nodes.wise2c.InitContainer:
     properties: *container_properties
     requirements:
