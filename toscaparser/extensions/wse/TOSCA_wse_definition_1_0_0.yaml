@@ -417,6 +417,10 @@ node_types:
         type: string
         required: false
         description: milicpu, same as spec.containers[].resources.requests.cpu
+      storage_limit:
+        type: string
+        required: false
+        description: ephemeral storage limit, same as spec.containers[].resources.limits.ephemeral-storage
       devices:
         type: map
         required: false
