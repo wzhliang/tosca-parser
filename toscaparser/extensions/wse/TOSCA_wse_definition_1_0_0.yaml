@@ -27,6 +27,10 @@ data_types:
         description: service name or selector
       port:
         type: integer
+      target_path:
+        type: string
+        description: service path
+        required: true  
       weight:
         type: integer
         description: only valid in round-robin mode
@@ -93,6 +97,10 @@ data_types:
         type: integer
       target:
         type: string
+      target_path:
+        type: string
+        description: service path
+        required: true 
       weight:
         type: integer
         required: false
