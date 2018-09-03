@@ -30,7 +30,7 @@ data_types:
       target_path:
         type: string
         description: service path
-        required: true  
+        required: false  
       weight:
         type: integer
         description: only valid in round-robin mode
@@ -100,7 +100,7 @@ data_types:
       target_path:
         type: string
         description: service path
-        required: true 
+        required: false 
       weight:
         type: integer
         required: false
