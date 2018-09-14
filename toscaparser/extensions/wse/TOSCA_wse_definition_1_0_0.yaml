@@ -136,8 +136,6 @@ data_types:
         type: string
         required: false
         default: TCP
-        constraints:
-        - valid_values: [ "TCP", "UDP" ]
       request_host:
         type: string
         required: false
