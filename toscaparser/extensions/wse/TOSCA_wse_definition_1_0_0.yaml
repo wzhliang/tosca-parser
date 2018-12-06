@@ -18,6 +18,21 @@ data_types:
       filter:
         type: string
         description: Filter for file names. E.g. *.log
+      kafka_topic:
+        type: string
+        required: false
+      first_line:
+        type: string
+        required: false
+        description: filebeat multiline config
+      negate:
+        type: string
+        required: false
+        description: filebeat multiline config
+      match:
+        type: string
+        required: false
+        description: filebeat multiline config
   tosca.datatypes.wise2c.IngressTarget:
     derived_from: tosca.datatypes.Root
     description: Ingress path configuration parameter
