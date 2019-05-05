@@ -22,9 +22,9 @@ SECTIONS = (DESCRIPTION, EVENT, SCHEDULE, METRIC, METADATA,
             TARGET_FILTER, CONDITION, ACTION) = \
            ('description', 'event_type', 'schedule', 'metric',
             'metadata', 'target_filter', 'condition', 'action')
-CONDITION_KEYNAMES = (CONSTRAINT, GRANULARITY, EVALUATIONS, AGGREGATION_METHOD,
+CONDITION_KEYNAMES = (CONSTRAINT, GRANULARITY, EVALUATIONS, METHOD, PERIOD, AGGREGATION_METHOD,
                       THRESHOLD, COMPARISON_OPERATOR, RESOURCE_TYPE) = \
-                     ('constraint', 'granularity', 'evaluations',
+                     ('constraint', 'granularity', 'evaluations', 'method', 'period',
                       'aggregation_method', 'threshold', 'comparison_operator',
                       'resource_type')
 log = logging.getLogger('tosca')
