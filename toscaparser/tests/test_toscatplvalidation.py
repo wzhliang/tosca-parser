@@ -21,6 +21,7 @@ from toscaparser.parameters import Output
 from toscaparser.policy import Policy
 from toscaparser.relationship_template import RelationshipTemplate
 from toscaparser.repositories import Repository
+from toscaparser.reservation import Reservation
 from toscaparser.tests.base import TestCase
 from toscaparser.topology_template import TopologyTemplate
 from toscaparser.tosca_template import ToscaTemplate
@@ -96,12 +97,12 @@ class ToscaTemplateValidationTest(TestCase):
             _('Template custom_types/imported_sample.yaml contains unknown '
               'field "tosca1_definitions_version". Refer to the definition'
               ' to verify valid values.'))
+        versions = '", "'.join(ToscaTemplate.VALID_TEMPLATE_VERSIONS)
         exception.ExceptionCollector.assertExceptionMessage(
             exception.InvalidTemplateVersion,
             _('The template version "tosca_simple_yaml_1_10 in '
               'custom_types/imported_sample.yaml" is invalid. '
-              'Valid versions are "tosca_simple_yaml_1_0, '
-              'tosca_simple_profile_for_nfv_1_0_0".'))
+              'Valid versions are "%s".') % versions)
         exception.ExceptionCollector.assertExceptionMessage(
             exception.UnknownFieldError,
             _('Template custom_types/imported_sample.yaml contains unknown '
@@ -1435,11 +1436,29 @@ heat-translator/master/translator/tests/data/custom_types/wordpress.yaml
             os.path.dirname(os.path.abspath(__file__)),
             "data/test_invalid_template_version.yaml")
         self.assertRaises(exception.ValidationError, ToscaTemplate, tosca_tpl)
-        valid_versions = ', '.join(ToscaTemplate.VALID_TEMPLATE_VERSIONS)
+        valid_versions = '", "'.join(ToscaTemplate.VALID_TEMPLATE_VERSIONS)
         exception.ExceptionCollector.assertExceptionMessage(
             exception.InvalidTemplateVersion,
             (_('The template version "tosca_xyz" is invalid. Valid versions '
                'are "%s".') % valid_versions))
+
+    def test_import_invalid_template_version(self):
+        tosca_tpl = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "data/test_import_invalid_template_version.yaml")
+        self.assertRaises(exception.ValidationError, ToscaTemplate, tosca_tpl)
+        valid_versions = '", "'.join(ToscaTemplate.VALID_TEMPLATE_VERSIONS)
+        exception.ExceptionCollector.assertExceptionMessage(
+            exception.InvalidTemplateVersion,
+            (_('The template version "tosca_simple_yaml_XXX in '
+               '{\'invalid\': \'custom_types/invalid_template_version.yaml\'}"'
+               ' is invalid. Valid versions are "%s".') % valid_versions))
+
+    def test_import_template_metadata(self):
+        tosca_tpl = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "data/test_import_metadata.yml")
+        ToscaTemplate(tosca_tpl)
 
     def test_node_template_capabilities_properties(self):
         # validating capability property values
@@ -1608,9 +1627,9 @@ heat-translator/master/translator/tests/data/custom_types/wordpress.yaml
                capability: Container
              condition:
                constraint: { greater_than: 50 }
-               period: 60
+               granularity: 60
                evaluations: 1
-               method : average
+               aggregation_method : mean
              action:
                resize: # Operation name
                 inputs:
@@ -1627,13 +1646,14 @@ heat-translator/master/translator/tests/data/custom_types/wordpress.yaml
         triggers:
          - high_cpu_usage:
              description: trigger
-             meter_name: cpu_util
+             metric: cpu_util
              condition:
                constraint: utilization greater_than 60%
                threshold: 60
-               period: 600
+               granularity: 600
                evaluations: 1
-               method: average
+               aggregation_method: mean
+               resource_type: instance
                comparison_operator: gt
              metadata: SG1
              action: [SP1]
@@ -1658,9 +1678,10 @@ heat-translator/master/translator/tests/data/custom_types/wordpress.yaml
                capability: Container
              condition:
                constraint: utilization greater_than 50%
-               period1: 60
+               granularity1: 60
                evaluations: 1
-               method: average
+               aggregation_method: mean
+               resource_type: instance
              action:
                resize: # Operation name
                 inputs:
@@ -1684,13 +1705,14 @@ heat-translator/master/translator/tests/data/custom_types/wordpress.yaml
         triggers:
          - high_cpu_usage:
              description: trigger
-             meter_name: cpu_util
+             metric: cpu_util
              condition:
                constraint: utilization greater_than 60%
                threshold: 60
-               period: 600
+               granularity: 600
                evaluations: 1
-               method: average
+               aggregation_method: mean
+               resource_type: instance
                comparison_operator: gt
              metadata1: SG1
              action: [SP1]
@@ -1843,3 +1865,59 @@ heat-translator/master/translator/tests/data/custom_types/wordpress.yaml
             os.path.dirname(os.path.abspath(__file__)),
             "data/test_normative_type_properties_override.yaml")
         self.assertIsNotNone(ToscaTemplate(tpl_path))
+
+    def test_long_rel(self):
+        tpl_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "data/test_long_rel.yaml")
+        self.assertIsNotNone(ToscaTemplate(tpl_path))
+
+    def test_policy_reservation_valid_keyname_heat_resources(self):
+        tpl_snippet = '''
+        reservation:
+          start_actions: [SP_RSV]
+          before_end_actions: [SP_RSV]
+          end_actions: [noop]
+          properties:
+            lease_id: '58d2239c-f181-4915-bdcb-040f7ef911a7'
+        '''
+        reservation = (toscaparser.utils.yamlparser.simple_parse(tpl_snippet))
+        name = list(reservation.keys())[0]
+        Reservation(reservation[name])
+
+    def test_policy_reservation_invalid_keyname_heat_resources(self):
+        tpl_snippet = '''
+        reservation:
+          start_actions: [SP_RSV]
+          before_actions: [SP_RSV]
+          end_actions: [noop]
+          properties:
+            lease_id: '58d2239c-f181-4915-bdcb-040f7ef911a7'
+        '''
+        reservation = (toscaparser.utils.yamlparser.simple_parse(tpl_snippet))
+        name = list(reservation.keys())[0]
+        expectedmessage = _(
+            'Reservation contains unknown field '
+            '"before_actions". Refer to the definition '
+            'to verify valid values.')
+        err = self.assertRaises(
+            exception.UnknownFieldError,
+            lambda: Reservation(reservation[name]))
+        self.assertEqual(expectedmessage, err.__str__())
+
+    def test_policy_reservation_missing_key_heat_resources(self):
+        tpl_snippet = '''
+        reservation:
+          start_actions: [SP_RSV]
+          end_actions: [noop]
+          properties:
+            lease_id: '58d2239c-f181-4915-bdcb-040f7ef911a7'
+        '''
+        reservation = (toscaparser.utils.yamlparser.simple_parse(tpl_snippet))
+        name = list(reservation.keys())[0]
+        expectedmessage = _('Reservation is missing '
+                            'required field "before_end_actions".')
+        err = self.assertRaises(
+            exception.MissingRequiredFieldError,
+            lambda: Reservation(reservation[name]))
+        self.assertEqual(expectedmessage, err.__str__())

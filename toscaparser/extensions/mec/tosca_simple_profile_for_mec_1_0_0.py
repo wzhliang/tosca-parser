@@ -13,9 +13,9 @@
 # VERSION and DEFS_FILE are required for all extensions
 
 
-class Wise2cProfile_1_0_0(object):
-    VERSION = 'tosca_simple_profile_for_wse_1_0_2'
+class MecProfile_1_0_0(object):
+    VERSION = 'tosca_simple_profile_for_mec_1_0_0'
 
-    DEFS_FILE = "TOSCA_wse_definition_1_0_0.yaml"
+    DEFS_FILE = "TOSCA_mec_definition_1_0_0.yaml"
 
     SECTIONS = ('metadata')
