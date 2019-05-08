@@ -446,6 +446,34 @@ node_types:
         type: string
         required: false
         description: ephemeral storage limit, same as spec.containers[].resources.limits.ephemeral-storage
+      amd.com/gpu_limit:
+        type: integer
+        required: false
+        description: limit amd gpu resource usage
+      nvidia.com/gpu_limit:
+        type: integer
+        required: false
+        description: limit nvidia gpu resource usage
+      cpu_request:
+        type: string
+        required: false
+        description: request at least cpu resource
+      mem_request:
+        type: string
+        required: false
+        description: request at least mem resource
+      storage_request:
+        type: string
+        required: false
+        description: request at least storage resource
+      amd.com/gpu_request:
+        type: integer
+        required: false
+        description: request at least gpu resource
+      nvidia.com/gpu_request:
+        type: integer
+        required: false
+        description: request at least gpu resource
       devices:
         type: map
         required: false
