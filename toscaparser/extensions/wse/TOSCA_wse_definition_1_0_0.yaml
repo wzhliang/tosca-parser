@@ -441,7 +441,7 @@ node_types:
       cpu:
         type: string
         required: false
-        description: milicpu, same as spec.containers[].resources.requests.cpu
+        description: milicpu, same as spec.containers[].resources.limits.cpu
       storage_limit:
         type: string
         required: false
