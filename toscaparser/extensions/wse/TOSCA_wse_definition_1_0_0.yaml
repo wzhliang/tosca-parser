@@ -792,6 +792,11 @@ policy_types:
       port:
         type: integer
         description: port for TCP/HTTP health check
+        required: false
+      command:
+        type: string
+        description: command for health check
+        required: false
       request_line:
         type: string
         description: request line for HTTP check
