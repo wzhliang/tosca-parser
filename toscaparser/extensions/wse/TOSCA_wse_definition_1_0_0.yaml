@@ -754,6 +754,12 @@ node_types:
       health_check:
         type: tosca.data_types.wise2c.ExtServiceHealthCheck
         required: false
+      ports:
+        type: list
+        description: ip ports of external service
+        required: false
+        entry_schema:
+          type: integer
   tosca.nodes.wise2c.DynamicConfigFile:
     derived_from: tosca.nodes.Root
     properties:
