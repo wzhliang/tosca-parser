@@ -828,6 +828,11 @@ policy_types:
       response_timeout:
         type: integer
         required: false
+      http_headers:
+        type: list
+        required: false
+        entry_schema:
+          type: tosca.datatypes.wise2c.HTTPHeader
   tosca.policies.wise2c.UpgradeStrategy:
     derived_from: tosca.policies.Update
     properties:
